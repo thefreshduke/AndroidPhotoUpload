@@ -1,5 +1,6 @@
 package com.example.thefreshduke.photouploadactivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -26,17 +27,39 @@ public class MainActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("Back Button Clicked", "");
+                Log.e("***BACK BUTTON CLICKED***", "");
             }
         });
 
         photoLibraryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("content://media/internal/images/media"));
-                startActivity(intent);
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 0);
             }
         });
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            switch (requestCode) {
+
+                case 0:
+                    if (resultCode == Activity.RESULT_OK) {
+                        Log.e("***PHOTO SELECTED***", "");
+                        //data gives you the image uri. Try to convert that to bitmap
+                        break;
+                    } else if (resultCode == Activity.RESULT_CANCELED) {
+                        Log.e("", "Selecting picture cancelled");
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            Log.e("", "Exception in onActivityResult : " + e.getMessage());
+        }
     }
 
     @Override
